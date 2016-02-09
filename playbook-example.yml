@@ -1,0 +1,28 @@
+---
+
+# This is the configuration you push to your machine(s).
+# Edit and save as playbook.yml
+
+- hosts: all
+  vars_files:
+    - servers.yml
+
+  vars:
+    # If hosting a server, this should be one of the site
+    # names in servers.yml
+    site: site-a
+
+    # Settings for your certificate(s)
+    org: Evil Corp
+    country: US
+    city: New York
+    email: sysadm@example.com # Address to sysadmin at the site.
+
+  roles:
+    - role: server
+
+    - role: client
+      remote_site: site-b
+
+    - role: client
+      remote_site: site-c

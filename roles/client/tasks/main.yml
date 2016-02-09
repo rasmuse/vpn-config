@@ -1,0 +1,78 @@
+---
+
+- name: Create a Certificate Signature Request for the client
+  become: yes
+  shell: . ./vars && ./pkitool --csr {{ client_filename_base }}
+  args:
+    chdir: "{{ easyrsa_dir }}"
+    creates: "{{ client_csr_path }}"
+
+- name: Fetch the client CSR
+  become: yes
+  fetch:
+    src: "{{ client_csr_path }}"
+    flat: yes
+    dest: files/certificate-requests/
+    fail_on_missing: yes
+
+
+- name: Copy server's TLS auth key if needed
+  become: yes
+  copy:
+    src: files/{{ remote_ta_key_path | basename }}
+    dest: "{{ remote_ta_key_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: servers[remote_site].tls_auth
+
+- name: Check if signed certificate exists
+  local_action: stat path=files/{{ client_crt_path | basename }}
+  register: client_certificate   
+
+- name: Copy client certificate
+  become: yes
+  copy:
+    src: "{{ client_certificate.stat.path }}"
+    dest: "{{ client_crt_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: client_certificate.stat.exists
+
+- name: Place client configuration file
+  become: yes
+  template:
+    src: client-template.ovpn
+    dest: "{{ client_conf_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: client_certificate.stat.exists
+
+- name: Restart OpenVPN
+  become: yes
+  service:
+    name: openvpn
+    state: restarted
+  ignore_errors: yes
+  register: openvpn_restarted
+
+- debug: var=openvpn_restarted
+
+- name: Copy out log file(s) if OpenVPN did not restart successfully
+  fetch:
+    src: /etc/openvpn/*.log
+    flat: yes
+    dest: files/logs/
+  when: openvpn_restarted.failed
+
+- name: Check OpenVPN status
+  shell: "service openvpn status"
+  register: result
+  when: client_certificate.stat.exists
+
+- name: Display OpenVPN status
+  debug:
+    var: result.stdout_lines
+  when: client_certificate.stat.exists

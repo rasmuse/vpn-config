@@ -1,0 +1,9 @@
+---
+
+client_filename_base: client-{{ site }}
+client_key_path_base: "{{ keys_dir }}/{{ client_filename_base }}"
+client_csr_path: "{{ client_key_path_base }}.csr"
+client_crt_path: "{{ client_key_path_base }}.crt"
+client_key_path: "{{ client_key_path_base }}.key"
+client_conf_path: /etc/openvpn/{{ client_filename_base }}.conf
+remote_ta_key_path: "{{ keys_dir }}/ta-{{ remote_site }}.key"

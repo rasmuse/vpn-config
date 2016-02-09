@@ -1,0 +1,24 @@
+---
+
+# Settings for servers. The server settings must be known by
+# the clients, so share this file or parts of this as you like.
+# Edit the file with your settings and save as servers.yml
+
+servers:
+  site-a:
+    cipher: AES-256-CBC
+    external_address: example.com
+    subnet: 167
+    compression: yes
+    tls_auth: yes
+    routes:
+      - 192.168.167.0 255.255.255.32
+      - 192.168.167.0 255.255.255.64
+
+  site-b:
+    cipher: AES-256-CBC
+    external_address: 123.123.123.123
+    subnet: 168
+    tls_auth: no
+    compression: no
+    routes: no

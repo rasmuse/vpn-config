@@ -1,0 +1,5 @@
+# Edit to your liking and save as hosts.yml
+
+[openvpn]
+localhost ansible_connection=local # To do it locally
+some.other.host:22 # Some other host

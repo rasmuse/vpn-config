@@ -1,0 +1,66 @@
+---
+
+- name: Create Diffie-Hellman parameters for the server
+  become: yes
+  shell: openssl dhparam 2048 > {{ dhparam_path }} 2>/dev/null
+  args:
+    creates: "{{ dhparam_path }}"
+
+- name: Create a Certificate Signature Request for the server
+  become: yes
+  shell: . ./vars && ./pkitool --csr --server server-{{ site }}
+  args:
+    chdir: "{{ easyrsa_dir }}"
+    creates: "{{ server_csr_path }}"
+
+- name: Fetch the server CSR
+  become: yes
+  fetch:
+    src: "{{ server_csr_path }}"
+    flat: yes
+    dest: files/certificate-requests/
+    fail_on_missing: yes
+
+- name: Generate a HMAC key for TLS authentication
+  become: yes
+  command: openvpn --genkey --secret {{ ta_key_path }}
+  args:
+    creates: "{{ ta_key_path }}"
+
+- name: Fetch the TLS auth HMAC key
+  become: yes
+  fetch:
+    src: "{{ ta_key_path }}"
+    flat: yes
+    dest: files/
+    fail_on_missing: yes
+
+- debug:
+    msg: "files/{{ server_crt_path | basename}}"
+
+- name: Check if signed certificate exists
+  local_action: stat path=files/{{ server_crt_path | basename}}
+  register: server_certificate
+
+- name: Copy server certificate
+  become: yes
+  copy:
+    src: "{{ server_certificate.stat.path }}"
+    dest: "{{ server_crt_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: server_certificate.stat.exists
+
+- name: Place server configuration file
+  become: yes
+  template:
+    src: server-template.ovpn
+    dest: "{{ server_conf_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: server_certificate.stat.exists
+
+- set_fact:
+    server_done: "{{ server_certificate.stat.exists }}"

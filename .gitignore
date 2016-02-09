@@ -1,0 +1,5 @@
+hosts.cfg
+servers.yml
+files/**/**
+playbook.yml
+.vagrant

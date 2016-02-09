@@ -1,0 +1,25 @@
+---
+
+easyrsa_dir: /etc/openvpn/easy-rsa
+keys_dir: /etc/openvpn/keys
+tmp_dir: /etc/openvpn/tmp
+ca_crt_path: "{{ keys_dir }}/ca.crt"
+
+# Log file verbosity
+# 0 is silent, except for fatal errors
+# 4 is reasonable for general usage
+# 5 and 6 can help to debug connection problems
+# 9 is extremely verbose 
+verb: 4
+
+# Silence repeating messages
+mute: 20
+
+# Run process as nobody (see openvpn docs)
+nobody: yes
+
+# chroot for security (see openvpn docs)
+chroot: yes
+
+# retry connection (see openvpn docs)
+resolv_retry: infinite

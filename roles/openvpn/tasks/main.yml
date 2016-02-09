@@ -1,0 +1,46 @@
+---
+
+- name: Install OpenVPN
+  become: yes
+  apt: name=openvpn state=present
+
+- name: Install easy-rsa
+  become: yes
+  apt: name=easy-rsa state=present
+
+- file: path={{ tmp_dir }} state=directory mode=0700
+  become: yes
+
+- file: path={{ keys_dir }} state=directory mode=0700
+  become: yes
+
+- name: Place CA certificate
+  become: yes
+  copy:
+    src: files/ca.crt
+    dest: "{{ keys_dir }}/"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create easy-rsa directory
+  become: yes
+  command: make-cadir {{ easyrsa_dir }}
+  args:
+    creates: "{{ easyrsa_dir }}"
+
+- name: Put customized vars file in easy-rsa directory
+  become: yes
+  template:
+    src: vars-template
+    dest: "{{ easyrsa_dir }}/vars"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Initialize keys directory
+  become: yes
+  shell: . ./vars && ./clean-all
+  args:
+    chdir: "{{ easyrsa_dir }}"
+    creates: "{{ keys_dir }}/index.txt"
