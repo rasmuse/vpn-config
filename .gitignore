@@ -1,5 +1,5 @@
 hosts.cfg
-servers.yml
-files/**/**
+shared_files/**/**
+!shared_files/servers-example.yml
 playbook.yml
 .vagrant

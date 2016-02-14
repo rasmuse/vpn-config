@@ -18,7 +18,7 @@
   fetch:
     src: "{{ server_csr_path }}"
     flat: yes
-    dest: files/certificate-requests/
+    dest: "{{ shared_files_dir }}/certificate-requests/"
     fail_on_missing: yes
 
 - name: Generate a HMAC key for TLS authentication
@@ -32,14 +32,14 @@
   fetch:
     src: "{{ ta_key_path }}"
     flat: yes
-    dest: files/
+    dest: "{{ shared_files_dir }}/"
     fail_on_missing: yes
 
 - debug:
     msg: "files/{{ server_crt_path | basename}}"
 
 - name: Check if signed certificate exists
-  local_action: stat path=files/{{ server_crt_path | basename}}
+  local_action: stat path={{ shared_files_dir }}/{{ server_crt_path | basename}}
   register: server_certificate
 
 - name: Copy server certificate

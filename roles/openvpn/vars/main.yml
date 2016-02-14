@@ -1,5 +1,6 @@
 ---
 
+shared_files_dir: files
 easyrsa_dir: /etc/openvpn/easy-rsa
 keys_dir: /etc/openvpn/keys
 tmp_dir: /etc/openvpn/tmp

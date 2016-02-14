@@ -12,14 +12,13 @@
   fetch:
     src: "{{ client_csr_path }}"
     flat: yes
-    dest: files/certificate-requests/
+    dest: "{{ shared_files_dir }}/certificate-requests/"
     fail_on_missing: yes
-
 
 - name: Copy server's TLS auth key if needed
   become: yes
   copy:
-    src: files/{{ remote_ta_key_path | basename }}
+    src: "{{ shared_files_dir }}/{{ remote_ta_key_path | basename }}"
     dest: "{{ remote_ta_key_path }}"
     owner: root
     group: root
@@ -27,7 +26,7 @@
   when: servers[remote_site].tls_auth
 
 - name: Check if signed certificate exists
-  local_action: stat path=files/{{ client_crt_path | basename }}
+  local_action: stat path={{ shared_files_dir }}/{{ client_crt_path | basename }}
   register: client_certificate   
 
 - name: Copy client certificate
