@@ -26,6 +26,7 @@
   command: openvpn --genkey --secret {{ ta_key_path }}
   args:
     creates: "{{ ta_key_path }}"
+  when: servers[site].tls_auth
 
 - name: Fetch the TLS auth HMAC key
   become: yes
@@ -34,9 +35,7 @@
     flat: yes
     dest: "{{ shared_files_dir }}/"
     fail_on_missing: yes
-
-- debug:
-    msg: "files/{{ server_crt_path | basename}}"
+  when: servers[site].tls_auth
 
 - name: Check if signed certificate exists
   local_action: stat path={{ shared_files_dir }}/{{ server_crt_path | basename}}
@@ -62,5 +61,19 @@
     mode: 0600
   when: server_certificate.stat.exists
 
-- set_fact:
-    server_done: "{{ server_certificate.stat.exists }}"
+- name: Restart OpenVPN
+  become: yes
+  service:
+    name: openvpn
+    state: restarted
+  ignore_errors: yes
+  register: openvpn_restarted
+  when: server_certificate.stat.exists
+
+- name: Fetch the log file if OpenVPN did not restart successfully
+  fetch:
+    src: "{{ server_log_path }}"
+    flat: yes
+    dest: "{{ shared_files_dir }}/logs/"
+    fail_on_missing: yes
+  when: server_certificate.stat.exists and openvpn_restarted.failed

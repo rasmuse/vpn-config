@@ -7,4 +7,5 @@ server_csr_path: "{{ server_key_path_base }}.csr"
 server_crt_path: "{{ server_key_path_base }}.crt"
 server_key_path: "{{ server_key_path_base }}.key"
 server_conf_path: /etc/openvpn/{{ server_filename_base }}.conf
+server_log_path: /etc/openvpn/{{ server_filename_base }}.log
 ta_key_path: "{{ keys_dir }}/ta-{{ site }}.key"

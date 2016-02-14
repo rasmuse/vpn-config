@@ -56,22 +56,12 @@
     state: restarted
   ignore_errors: yes
   register: openvpn_restarted
+  when: client_certificate.stat.exists
 
-- debug: var=openvpn_restarted
-
-- name: Copy out log file(s) if OpenVPN did not restart successfully
+- name: Fetch the log file if OpenVPN did not restart successfully
   fetch:
-    src: /etc/openvpn/*.log
+    src: "{{ client_log_path }}"
     flat: yes
-    dest: files/logs/
-  when: openvpn_restarted.failed
-
-- name: Check OpenVPN status
-  shell: "service openvpn status"
-  register: result
-  when: client_certificate.stat.exists
-
-- name: Display OpenVPN status
-  debug:
-    var: result.stdout_lines
-  when: client_certificate.stat.exists
+    dest: "{{ shared_files_dir }}/logs/"
+    fail_on_missing: yes
+  when: client_certificate.stat.exists and openvpn_restarted.failed

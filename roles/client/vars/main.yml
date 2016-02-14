@@ -6,4 +6,5 @@ client_csr_path: "{{ client_key_path_base }}.csr"
 client_crt_path: "{{ client_key_path_base }}.crt"
 client_key_path: "{{ client_key_path_base }}.key"
 client_conf_path: /etc/openvpn/{{ client_filename_base }}.conf
+client_log_path: /etc/openvpn/{{ client_filename_base }}.log
 remote_ta_key_path: "{{ keys_dir }}/ta-{{ remote_site }}.key"
