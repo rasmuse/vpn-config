@@ -71,9 +71,10 @@
   when: server_certificate.stat.exists
 
 - name: Fetch the log file if OpenVPN did not restart successfully
+  become: yes
   fetch:
     src: "{{ server_log_path }}"
     flat: yes
     dest: "{{ shared_files_dir }}/{{ site }}/logs/"
     fail_on_missing: yes
-  when: server_certificate.stat.exists and openvpn_restarted.failed
+  when: server_certificate.stat.exists and 'failed' in openvpn_restarted and openvpn_restarted.failed
