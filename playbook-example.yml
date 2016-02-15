@@ -4,8 +4,6 @@
 # Edit and save as playbook.yml
 
 - hosts: all
-  vars_files:
-    - servers.yml
 
   vars:
     # If hosting a server, this should be one of the site

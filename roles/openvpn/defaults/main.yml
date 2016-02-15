@@ -1,0 +1,43 @@
+---
+
+shared_files_dir: shared_files
+easyrsa_dir: /etc/openvpn/easy-rsa
+keys_dir: /etc/openvpn/keys
+tmp_dir: /etc/openvpn/tmp
+ca_crt_path: "{{ keys_dir }}/ca.crt"
+
+# Port to use for OpenVPN. 1194 is the OpenVPN default,
+# but if you are running multiple OpenVPN instances on one machine
+# it is probably best to use separate ports.
+# Ports above 50,000 are "free", i.e. normally not reserved for
+# anything special.
+port: 1194
+
+# Address range for the VPN. This should be somewhere in the private ranges,
+#  * 192.168.0.0 - 192.168.255.255,
+#  * 172.16.0.0 - 172.31.255.255, or
+#  * 10.0.0.0 - 10.255.255.255.
+#
+# And to minimize network confusion, it's best to choose a range which is
+# unlikely to collide with your home network, work network, coffee shops, etc.
+# Somewhere in the large 10.x.x.x range is probably a good choice.
+address_range: 10.42.1.0 255.255.255.0
+
+# Log file verbosity
+# 0 is silent, except for fatal errors
+# 4 is reasonable for general usage
+# 5 and 6 can help to debug connection problems
+# 9 is extremely verbose 
+verb: 4
+
+# Silence repeating messages
+mute: 20
+
+# Run process as nobody (see openvpn docs)
+nobody: yes
+
+# chroot for security (see openvpn docs)
+chroot: yes
+
+# retry connection (see openvpn docs)
+resolv_retry: infinite

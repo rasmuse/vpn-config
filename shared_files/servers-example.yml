@@ -8,17 +8,17 @@ servers:
   site-a:
     cipher: AES-256-CBC
     external_address: example.com
-    subnet: 167
+    address_range: 10.16.42.0 255.255.255.0
     compression: yes
     tls_auth: yes
     routes:
-      - 192.168.167.0 255.255.255.32
-      - 192.168.167.0 255.255.255.64
+      - 192.168.167.147 255.255.255.255 # Expose a single address on the local LAN
+      - 192.168.167.0 255.255.255.32 # Expose a whole range on the local LAN
 
   site-b:
     cipher: AES-256-CBC
     external_address: 123.123.123.123
-    subnet: 168
+    port: 50042 # Instead of the standard OpenVPN port
     tls_auth: no
     compression: no
-    routes: no
+    routes: no # Don't forward traffic to any other machines on the local LAN

@@ -1,5 +1,7 @@
 ---
 
+- include_vars: "{{ shared_files_dir }}/servers.yml"
+
 - name: Enable IPv4 forwarding
   become: yes
   lineinfile:

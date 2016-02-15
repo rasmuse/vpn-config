@@ -18,7 +18,7 @@
   fetch:
     src: "{{ server_csr_path }}"
     flat: yes
-    dest: "{{ shared_files_dir }}/certificate-requests/"
+    dest: "{{ shared_files_dir }}/{{ site }}/"
     fail_on_missing: yes
 
 - name: Generate a HMAC key for TLS authentication
@@ -33,12 +33,12 @@
   fetch:
     src: "{{ ta_key_path }}"
     flat: yes
-    dest: "{{ shared_files_dir }}/"
+    dest: "{{ shared_files_dir }}/tls-auth-keys/"
     fail_on_missing: yes
   when: servers[site].tls_auth
 
 - name: Check if signed certificate exists
-  local_action: stat path={{ shared_files_dir }}/{{ server_crt_path | basename}}
+  local_action: stat path={{ shared_files_dir }}/{{ site }}/{{ server_crt_path | basename}}
   register: server_certificate
 
 - name: Copy server certificate
@@ -74,6 +74,6 @@
   fetch:
     src: "{{ server_log_path }}"
     flat: yes
-    dest: "{{ shared_files_dir }}/logs/"
+    dest: "{{ shared_files_dir }}/{{ site }}/logs/"
     fail_on_missing: yes
   when: server_certificate.stat.exists and openvpn_restarted.failed
