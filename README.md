@@ -85,4 +85,6 @@ When certificates are signed, they end up at `keys/[server-name].crt` and `keys/
     ./build-req [client-name]
     ```
 
-    Now put the request file `keys/[name].csr` to the CA `keys` directory and sign it by running `./sign-req [name]`.
+    Now put the request file `keys/[name].csr` to the CA `keys` directory and sign it by running `./sign-req [name]` or `./sign-req --server [name]`. 
+
+    Note that the `--server` option is needed if the CSR was created using `pkitool --server`. If you miss this, the certificate will be signed, but it will not pass the security test an OpenVPN client makes when configured with the option `remote-cert-tls server`.
